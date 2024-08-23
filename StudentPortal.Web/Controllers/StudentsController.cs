@@ -8,20 +8,20 @@ namespace StudentPortal.Web.Controllers
 {
 	public class StudentsController : Controller
 	{
-        public StudentsController(ApplicationDbContext DbContext)
-        {
-            this.DbContext = DbContext;
-        }
+		public StudentsController(ApplicationDbContext DbContext)
+		{
+			this.DbContext = DbContext;
+		}
 
-        public ApplicationDbContext DbContext { get; }
+		public ApplicationDbContext DbContext { get; }
 
-        [HttpGet]
+		[HttpGet]
 		public IActionResult Add()
-		{ 
+		{
 			return View();
 		}
 		[HttpPost]
-        public async Task<IActionResult> Add(AddStudentViewModel ViewModel)
+		public async Task<IActionResult> Add(AddStudentViewModel ViewModel)
 		{
 			var student = new Student
 			{
@@ -30,30 +30,30 @@ namespace StudentPortal.Web.Controllers
 				Phone = ViewModel.Phone,
 				Subscribed = ViewModel.Subscribed,
 			};
-            await DbContext.Students.AddAsync(student);
+			await DbContext.Students.AddAsync(student);
 			await DbContext.SaveChangesAsync();
-            return View();
-        }
+			return View();
+		}
 
 		[HttpGet]
 		public async Task<IActionResult> List()
 		{
-		 var Students=await DbContext.Students.ToListAsync();
+			var Students = await DbContext.Students.ToListAsync();
 
 			return View(Students);
-        }
+		}
 
 		[HttpGet]
 		public async Task<IActionResult> Edit(Guid id)
 		{
-            var Student = await DbContext.Students.FindAsync(id);
+			var Student = await DbContext.Students.FindAsync(id);
 			return View(Student);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult>Edit(Student ViewModel)
+		public async Task<IActionResult> Edit(Student ViewModel)
 		{
-            var Student = await DbContext.Students.FindAsync(ViewModel.Id);
+			var Student = await DbContext.Students.FindAsync(ViewModel.Id);
 
 			if (Student is not null)
 			{
@@ -63,22 +63,23 @@ namespace StudentPortal.Web.Controllers
 				Student.Subscribed = ViewModel.Subscribed;
 				await DbContext.SaveChangesAsync();
 			}
-			return RedirectToAction("List","Students");	
+			return RedirectToAction("List", "Students");
 		}
-		[HttpPost]	
-		public async Task<IActionResult> Delete(Student ViewModel)
+		[HttpPost]
+		public async Task<IActionResult> Delete(Student ViewModel)	
 		{
-			var Student=await DbContext.Students
+
+			var Student = await DbContext.Students
 				.AsNoTracking()
-				.FirstOrDefaultAsync(x=>x.Id==ViewModel.Id);
+				.FirstOrDefaultAsync(x => x.Id == ViewModel.Id);
 			if (Student is not null)
 			{
-                DbContext.Students.Remove(ViewModel);
-                await DbContext.SaveChangesAsync();
+				DbContext.Students.Remove(ViewModel);
+				await DbContext.SaveChangesAsync();
 			}
 			return RedirectToAction("List", "Students");
 		}
-
+	 
 
     }
 
